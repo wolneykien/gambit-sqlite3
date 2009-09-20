@@ -1,4 +1,4 @@
-Name: gambit-bh-db-sqlite3
+Name: gambit-sqlite3
 Version: 1.0
 Release: alt1
 Summary: SQLite3 database library for Gambit-C Scheme programming system
@@ -8,32 +8,50 @@ URL: http://okmij.org/ftp/Scheme/#databases
 
 Packager: Paul Wolneykien <manowar@altlinux.ru>
 
-BuildPreReq: sqlite3 libsqlite3-devel
+BuildPreReq: gambit sqlite3 libsqlite3-devel
 
 Source: %name-%version.tar.gz
 
 %description
 SQLite3 database library for Gambit-C Scheme programming system
 
+%package devel
+Summary: SQLite3 database library link file for Gambit-C Scheme programming system
+Group: Development/Scheme
+Requires: %name = %version-%release
+BuildArch: noarch
+
+%description devel
+SQLite3 database library for Gambit-C Scheme programming system
+
+This package contains the library link file
+
 %prep
 %setup -q
 
 %build
-gsc -:daq- -link -o libgambc-sqlite3.c sqlite3.scm
-gsc -:daq- -obj -cc-options "-D___SHARED" sqlite3.c libgambc-sqlite3.c
+gsc -:daq- -link -flat -o libgambc-sqlite3.c sqlite3.scm
+gsc -:daq- -obj -cc-options "-D___SHARE -D___PRIMAL" sqlite3.c libgambc-sqlite3.c
 gcc -shared sqlite3.o libgambc-sqlite3.o -lgambc -lsqlite3 -o libgambc-sqlite3.so
 
 %install
 install -Dp -m0644 libgambc-sqlite3.so %buildroot%{_libdir}/gambit/libgambc-sqlite3.so
+install -Dp -m0644 libgambc-sqlite3.c %buildroot%{_includedir}/gambit/libgambc-sqlite3.c
 
 %check
 echo "Run sqlite3-test.scm to verify the library"
-gsc -:daq- -exe -o sqlite3-test -ld-options "-L%buildroot%{_libdir}/gambit -lgambc-sqlite3" sqlite3-test.scm
+gsc -:daq- -link %buildroot%{_includedir}/gambit/libgambc-sqlite3.c sqlite3-test.scm
+gsc -:daq- -obj sqlite3-test.c sqlite3-test_.c
+gcc sqlite3-test.o sqlite3-test_.o -lgambc -L%buildroot%{_libdir}/gambit -lgambc-sqlite3 -o sqlite3-test
+export LD_LIBRARY_PATH=%buildroot%{_libdir}/gambit
 ./sqlite3-test -:daq-
 
 %files
 %doc README COPYRIGHT
 %{_libdir}/gambit/libgambc-sqlite3.so
+
+%files devel
+%{_includedir}/gambit/libgambc-sqlite3.c
 
 %changelog
 * Thu Sep 10 2009 Paul Wolneykien <manowar@altlinux.ru> 1.0-alt1
