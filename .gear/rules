@@ -1,1 +1,1 @@
-tar.gz: sqlite3
+tar.gz: sqlite3 name=@name@-@version@
