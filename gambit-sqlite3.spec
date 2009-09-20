@@ -1,6 +1,6 @@
 Name: gambit-sqlite3
 Version: 1.0
-Release: alt1
+Release: alt2
 Summary: SQLite3 database library for Gambit-C Scheme programming system
 License: GPL
 Group: Development/Scheme
@@ -31,7 +31,7 @@ This package contains the library link file
 
 %build
 gsc -:daq- -link -flat -o libgambc-sqlite3.c sqlite3.scm
-gsc -:daq- -obj -cc-options "-D___SHARE -D___PRIMAL" sqlite3.c libgambc-sqlite3.c
+gsc -:daq- -obj -cc-options "-D___LIBRARY -D___SHARED -D___PRIMAL" sqlite3.c libgambc-sqlite3.c
 gcc -shared sqlite3.o libgambc-sqlite3.o -lgambc -lsqlite3 -o libgambc-sqlite3.so
 
 %install
@@ -54,5 +54,8 @@ export LD_LIBRARY_PATH=%buildroot%{_libdir}/gambit
 %{_includedir}/gambit/libgambc-sqlite3.c
 
 %changelog
+* Mon Sep 21 2009 Paul Wolneykien <manowar@altlinux.ru> 1.0-alt2
+- Correct C compiler flags.
+
 * Thu Sep 10 2009 Paul Wolneykien <manowar@altlinux.ru> 1.0-alt1
 - Initial build for ALTLinux.
