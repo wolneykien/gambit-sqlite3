@@ -39,8 +39,8 @@
       (let [(res (db-fold-left fn seed query))]
        (close)
 	   (if (equal? res (force expected))
-         (print name ":\t\tpassed.\n")
-         (print name ":\t\tfailed.\n"))))))
+         (print "\tpassed.\n")
+         (print "\tfailed.\n"))))))
 
 (define (run-tests)
 
