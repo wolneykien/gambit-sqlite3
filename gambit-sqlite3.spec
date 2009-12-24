@@ -1,6 +1,6 @@
 Name: gambit-sqlite3
 Version: 1.0
-Release: alt2
+Release: alt3
 Summary: SQLite3 database library for Gambit-C Scheme programming system
 License: GPL
 Group: Development/Scheme
@@ -54,6 +54,9 @@ export LD_LIBRARY_PATH=%buildroot%{_libdir}/gambit
 %{_includedir}/gambit/libgambc-sqlite3.c
 
 %changelog
+* Thu Dec 24 2009 Paul Wolneykien <manowar@altlinux.ru> 1.0-alt3
+- Add sqlite3-specific exception handling.
+
 * Mon Sep 21 2009 Paul Wolneykien <manowar@altlinux.ru> 1.0-alt2
 - Correct C compiler flags.
 
