@@ -18,10 +18,12 @@
 
 (define sqlite3 #f)
 
-(define (raise-db-error db)
-  (raise (list 'sqlite3-err
-                   (sqlite3-errcode db)
-                   (sqlite3-errmsg db))))
+(define (raise-sqlite3-error arg . rest)
+  (raise (append '(sqlite3-err)
+                  (if (null? rest)
+                    (list (sqlite3-errcode arg)
+                          (sqlite3-errmsg arg))
+                    rest))))
 
 (define (sqlite3-error? e)
   (and (list? e)
@@ -65,7 +67,7 @@
     (let ([db (%sqlite3-open name)])
       (if (zero? (sqlite3-errcode db))
 	  db
-	  (raise-db-error db))))
+	  (raise-sqlite3-error db))))
 
   ;;; Result handling
 
@@ -96,7 +98,7 @@
 				  res
 				  (db-fold-left db fn res query)))))]
        [(sqlite-busy? x) #f]
-       [else (raise-db-error db)])))
+       [else (raise-sqlite3-error db)])))
 
 
   (set! sqlite3
