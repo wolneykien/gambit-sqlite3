@@ -23,7 +23,7 @@
                   (if (null? rest)
                     (list (sqlite3-errcode arg)
                           (sqlite3-errmsg arg))
-                    rest))))
+                    (append (list arg) rest)))))
 
 (define (sqlite3-error? e)
   (and (list? e)
