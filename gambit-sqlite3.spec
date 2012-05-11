@@ -1,6 +1,6 @@
 Name: gambit-sqlite3
 Version: 1.2
-Release: alt1
+Release: alt2
 Summary: SQLite3 database library for Gambit-C Scheme programming system
 License: GPL
 Group: Development/Scheme
@@ -54,6 +54,9 @@ export LD_LIBRARY_PATH=%buildroot%{_libdir}/gambit
 %{_includedir}/gambit/libgambc-sqlite3.c
 
 %changelog
+* Fri May 11 2012 Paul Wolneykien <manowar@altlinux.ru> 1.2-alt2
+- Rebuild with a new version of Gambit.
+
 * Thu Mar 15 2012 Paul Wolneykien <manowar@altlinux.ru> 1.2-alt1
 - Fix more: always finalize the query on fetch exit.
 
