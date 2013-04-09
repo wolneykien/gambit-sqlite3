@@ -85,30 +85,23 @@
 
   ; Interface
   ; fn: seed col col ... -> continue? new-seed
-  (define (_db-fold-left db fn seed query)
+  (define (db-fold-left db fn seed query)
     (let ([x (sqlite3-step query)])
       (cond
-       [(sqlite-done? x) seed]
+       [(sqlite-done? x) (sqlite3-finalize query) seed]
        [(sqlite-row? x) (let ([ncol (sqlite3-column-count query)])
 			  (call-with-values
 			      (lambda ()
 				(process-row query ncol fn seed))
 			    (lambda (continue? res)
 			      (if (not continue?)
-				  res
+				  (begin
+				    (sqlite3-finalize query)
+				    res)
 				  (db-fold-left db fn res query)))))]
        [(sqlite-busy? x) #f]
        [else (raise-sqlite3-error db)])))
 
-  (define (db-fold-left db fn seed query)
-    (with-exception-catcher
-      (lambda (e)
-	(sqlite3-finalize query)
-        (raise e))
-      (lambda ()
-	(let ((res (_db-fold-left db fn seed query)))
-	  (sqlite3-finalize query)
-	  res))))
 
   (set! sqlite3
 	(lambda ( name)
