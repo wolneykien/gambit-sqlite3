@@ -95,9 +95,7 @@
 				(process-row query ncol fn seed))
 			    (lambda (continue? res)
 			      (if (not continue?)
-				  (begin
-				    (sqlite3-finalize query)
-				    res)
+				  res
 				  (db-fold-left db fn res query)))))]
        [(sqlite-busy? x) #f]
        [else (raise-sqlite3-error db)])))
