@@ -11,11 +11,11 @@ all: $(BASENAME).scm $(BASENAME)-common.scm $(BASENAME)-ffi.scm
 	gsc -:daq- -obj -cc-options "-D___LIBRARY -D___SHARED -D___PRIMAL" $(BASENAME).c libgambc-$(BASENAME).c
 	gcc -shared $(BASENAME).o libgambc-$(BASENAME).o -lgambc $(LIBS) -o libgambc-$(BASENAME).so
 
-install:
+install: libgambc-$(BASENAME).so libgambc-$(BASENAME).c
 	install -Dp -m0644 libgambc-$(BASENAME).so $(libdir)/gambit/libgambc-$(BASENAME).so
 	install -Dp -m0644 libgambc-$(BASENAME).c $(includedir)/gambit/libgambc-$(BASENAME).c
 
-check:
+check: $(BASENAME)-test.scm $(BASENAME)-test.c libgambc-$(BASENAME).so
 	echo "Run $(BASENAME)-test.scm to verify the library"
 	gsc -:daq- -link ./libgambc-$(BASENAME).c $(BASENAME)-test.scm
 	gsc -:daq- -obj $(BASENAME)-test.c $(BASENAME)-test_.c
