@@ -2,22 +2,24 @@
 libdir=/usr/lib
 includedir=/usr/include
 
-all: sqlite3.scm sqlite3-common.scm sqlite3-ffi.scm
-	gsc -:daq- -link -flat -o libgambc-sqlite3.c sqlite3.scm
-	gsc -:daq- -obj -cc-options "-D___LIBRARY -D___SHARED -D___PRIMAL" sqlite3.c libgambc-sqlite3.c
-	gcc -shared sqlite3.o libgambc-sqlite3.o -lgambc -lsqlite3 -o libgambc-sqlite3.so
+BASENAME=sqlite3
+
+all: $(BASENAME).scm $(BASENAME)-common.scm $(BASENAME)-ffi.scm
+	gsc -:daq- -link -flat -o libgambc-$(BASENAME).c $(BASENAME).scm
+	gsc -:daq- -obj -cc-options "-D___LIBRARY -D___SHARED -D___PRIMAL" $(BASENAME).c libgambc-$(BASENAME).c
+	gcc -shared $(BASENAME).o libgambc-$(BASENAME).o -lgambc -l$(BASENAME) -o libgambc-$(BASENAME).so
 
 install:
-	install -Dp -m0644 libgambc-sqlite3.so $(libdir)/gambit/libgambc-sqlite3.so
-	install -Dp -m0644 libgambc-sqlite3.c $(includedir)/gambit/libgambc-sqlite3.c
+	install -Dp -m0644 libgambc-$(BASENAME).so $(libdir)/gambit/libgambc-$(BASENAME).so
+	install -Dp -m0644 libgambc-$(BASENAME).c $(includedir)/gambit/libgambc-$(BASENAME).c
 
 check:
-	echo "Run sqlite3-test.scm to verify the library"
-	gsc -:daq- -link ./libgambc-sqlite3.c sqlite3-test.scm
-	gsc -:daq- -obj sqlite3-test.c sqlite3-test_.c
-	gcc sqlite3-test.o sqlite3-test_.o -lgambc -L. -lgambc-sqlite3 -o sqlite3-test
-	LD_LIBRARY_PATH=. ./sqlite3-test -:daq-
+	echo "Run $(BASENAME)-test.scm to verify the library"
+	gsc -:daq- -link ./libgambc-$(BASENAME).c $(BASENAME)-test.scm
+	gsc -:daq- -obj $(BASENAME)-test.c $(BASENAME)-test_.c
+	gcc $(BASENAME)-test.o $(BASENAME)-test_.o -lgambc -L. -lgambc-$(BASENAME) -o $(BASENAME)-test
+	LD_LIBRARY_PATH=. ./$(BASENAME)-test -:daq-
 
 clean:
-	rm -fv libgambc-sqlite3.c libgambc-sqlite3.o libgambc-sqlite3.so
-	rm -fv sqlite3-test sqlite3-test.c sqlite3-test.o sqlite3-test_.c sqlite3-test_.o sqlite3.c sqlite3.o
+	rm -fv libgambc-$(BASENAME).c libgambc-$(BASENAME).o libgambc-$(BASENAME).so
+	rm -fv $(BASENAME)-test $(BASENAME)-test.c $(BASENAME)-test.o $(BASENAME)-test_.c $(BASENAME)-test_.o $(BASENAME).c $(BASENAME).o
