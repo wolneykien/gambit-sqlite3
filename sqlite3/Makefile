@@ -3,11 +3,13 @@ libdir=/usr/lib
 includedir=/usr/include
 
 BASENAME=sqlite3
+#LIBS=
+LIBS=-l$(BASENAME)
 
 all: $(BASENAME).scm $(BASENAME)-common.scm $(BASENAME)-ffi.scm
 	gsc -:daq- -link -flat -o libgambc-$(BASENAME).c $(BASENAME).scm
 	gsc -:daq- -obj -cc-options "-D___LIBRARY -D___SHARED -D___PRIMAL" $(BASENAME).c libgambc-$(BASENAME).c
-	gcc -shared $(BASENAME).o libgambc-$(BASENAME).o -lgambc -l$(BASENAME) -o libgambc-$(BASENAME).so
+	gcc -shared $(BASENAME).o libgambc-$(BASENAME).o -lgambc $(LIBS) -o libgambc-$(BASENAME).so
 
 install:
 	install -Dp -m0644 libgambc-$(BASENAME).so $(libdir)/gambit/libgambc-$(BASENAME).so
