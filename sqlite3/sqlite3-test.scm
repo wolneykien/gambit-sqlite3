@@ -39,34 +39,41 @@
       (let [(res (db-fold-left fn seed query))]
        (close)
 	   (if (equal? res (force expected))
-         (print "\tpassed.\n")
-         (print "\tfailed.\n"))))))
+         (begin
+           (print "\tpassed.\n")
+           #t)
+         (begin
+           (print "\tfailed.\n")
+           #f))))))
 
 (define (run-tests)
+  (list
+    
+    (let ([q "CREATE TABLE tb1 (c0 INTEGER, c1 TEXT, c2 REAL);"])
+      (test-query q values q (get-expected ".schema tb1")))
+    
+    (test-query "INSERT INTO tb1 VALUES(1, 'one', 1.001);"
+                values
+                "1|one|1.001"
+                (get-expected "select * from tb1;"))
 
-  (let ([q "CREATE TABLE tb1 (c0 INTEGER, c1 TEXT, c2 REAL);"])
-    (test-query q values q (get-expected ".schema tb1")))
-
-  (test-query "INSERT INTO tb1 VALUES(1, 'one', 1.001);"
-              values
-              "1|one|1.001"
-              (get-expected "select * from tb1;"))
-
-  (let ([fn (lambda (seed c0 c1 c2)
-              (values #t (with-output-to-string
-                           seed
-                           (lambda ()
-                             (print c0 "|" c1 "|" c2)))))]) ;
-    (test-query "SELECT * FROM tb1;" fn ""
-                (get-expected "select * from tb1;"))))
+    (let ([fn (lambda (seed c0 c1 c2)
+                (values #t (with-output-to-string
+                             seed
+                             (lambda ()
+                               (print c0 "|" c1 "|" c2)))))])
+      (test-query "SELECT * FROM tb1;" fn ""
+                  (get-expected "select * from tb1;")))))
 
 
 (define (run)
   (if (file-exists? *dbname*)
     (delete-file *dbname*))
 
-  (time (run-tests))
+  (let ((res (time (run-tests))))
+    (delete-file *dbname*)
+    res))
 
-  (delete-file *dbname*))
-
-(run)
+(if (run)
+  (exit 0)
+  (exit 1))
