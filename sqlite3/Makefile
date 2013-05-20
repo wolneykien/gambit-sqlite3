@@ -1,37 +1,23 @@
-# Makefile to gambit-c's sqlite3 binding.
-#
-# Copyright (C) 2008 Marco Benelli <mbenelli@yahoo.com>
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
 
-GAMBIT_ROOT=/usr/local/Gambit-C/current
+libdir=/usr/lib
+includedir=/usr/include
 
-GSC=$(GAMBIT_ROOT)/bin/gsc
-GSI=$(GAMBIT_ROOT)/bin/gsi
-GSC_OPTIONS= -f
-CC_OPTIONS=""
-LD_OPTIONS="-lsqlite3"
-OPTIONS= $(GSC_OPTIONS) -cc-options $(CC_OPTIONS) -ld-options $(LD_OPTIONS)
+all: sqlite3.scm sqlite3-common.scm sqlite3-ffi.scm
+	gsc -:daq- -link -flat -o libgambc-sqlite3.c sqlite3.scm
+	gsc -:daq- -obj -cc-options "-D___LIBRARY -D___SHARED -D___PRIMAL" sqlite3.c libgambc-sqlite3.c
+	gcc -shared sqlite3.o libgambc-sqlite3.o -lgambc -lsqlite3 -o libgambc-sqlite3.so
 
-.SUFFIXES: .o1 .scm
-.scm.o1:
-	$(GSC) $(OPTIONS) $<
+install:
+	install -Dp -m0644 libgambc-sqlite3.so $(libdir)/gambit/libgambc-sqlite3.so
+	install -Dp -m0644 libgambc-sqlite3.c $(includedir)/gambit/libgambc-sqlite3.c
 
-sqlite3: sqlite3.o1
+check:
+	echo "Run sqlite3-test.scm to verify the library"
+	gsc -:daq- -link ./libgambc-sqlite3.c sqlite3-test.scm
+	gsc -:daq- -obj sqlite3-test.c sqlite3-test_.c
+	gcc sqlite3-test.o sqlite3-test_.o -lgambc -L. -lgambc-sqlite3 -o sqlite3-test
+	LD_LIBRARY_PATH=. ./sqlite3-test -:daq-
 
 clean:
-	rm -f *.o*
-	rm -f *.c
-
+	rm -fv libgambc-sqlite3.c libgambc-sqlite3.o libgambc-sqlite3.so
+	rm -fv sqlite3-test sqlite3-test.c sqlite3-test.o sqlite3-test_.c sqlite3-test_.o sqlite3.c sqlite3.o
