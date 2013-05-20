@@ -11,8 +11,14 @@ all: libgambc-$(BASENAME).so
 libgambc-$(BASENAME).c: $(BASENAME).scm $(BASENAME)-common.scm $(BASENAME)-ffi.scm
 	gsc -:daq- -link -flat -o libgambc-$(BASENAME).c $(BASENAME).scm
 
+$(BASENAME).c: libgambc-$(BASENAME).c
+	[ -f $< ]
+
 libgambc-$(BASENAME).o: $(BASENAME).c libgambc-$(BASENAME).c
 	gsc -:daq- -obj -cc-options "-D___LIBRARY -D___SHARED -D___PRIMAL" $(BASENAME).c libgambc-$(BASENAME).c
+
+$(BASENAME).o: libgambc-$(BASENAME).o
+	[ -f $< ]
 
 libgambc-$(BASENAME).so: $(BASENAME).o libgambc-$(BASENAME).o
 	gcc -shared $(BASENAME).o libgambc-$(BASENAME).o -lgambc $(LIBS) -o libgambc-$(BASENAME).so
