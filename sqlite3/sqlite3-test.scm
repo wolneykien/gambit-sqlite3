@@ -72,7 +72,7 @@
 
   (let ((res (time (run-tests))))
     (delete-file *dbname*)
-    res))
+    (not (member #f res))))
 
 (if (run)
   (exit 0)
