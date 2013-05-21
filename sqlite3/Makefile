@@ -27,11 +27,13 @@ install: libgambc-$(BASENAME).so libgambc-$(BASENAME).c
 	install -Dp -m0644 libgambc-$(BASENAME).so $(libdir)/gambit/libgambc-$(BASENAME).so
 	install -Dp -m0644 libgambc-$(BASENAME).c $(includedir)/gambit/libgambc-$(BASENAME).c
 
-check: $(BASENAME)-test.scm libgambc-$(BASENAME).so
+$(BASENAME)-test: $(BASENAME)-test.scm libgambc-$(BASENAME).so
 	echo "Run $(BASENAME)-test.scm to verify the library"
 	gsc -:daq- -link ./libgambc-$(BASENAME).c $(BASENAME)-test.scm
 	gsc -:daq- -obj $(BASENAME)-test.c $(BASENAME)-test_.c
 	gcc $(BASENAME)-test.o $(BASENAME)-test_.o -lgambc -L. -lgambc-$(BASENAME) -o $(BASENAME)-test
+
+check: $(BASENAME)-test
 	LD_LIBRARY_PATH=. ./$(BASENAME)-test -:daq-
 
 clean:
