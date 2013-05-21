@@ -10,7 +10,7 @@ Packager: Paul Wolneykien <manowar@altlinux.ru>
 
 BuildPreReq: gambit sqlite3 libsqlite3-devel
 
-Source: %name-%version.tar.gz
+Source: %name-%version.tar
 
 %description
 SQLite3 database library for Gambit-C Scheme programming system
