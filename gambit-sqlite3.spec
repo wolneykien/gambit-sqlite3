@@ -47,6 +47,7 @@ This package contains the library link file
 
 %changelog
 * Mon May 20 2013 Paul Wolneykien <manowar@altlinux.org> 1.2-alt6
+- Bundle sources in plain tar.
 - Take care of the return code of the sqlite3-test.scm.
 - Use the universal Makefile.
 
