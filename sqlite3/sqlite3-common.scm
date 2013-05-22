@@ -37,6 +37,15 @@
                       (raise e)))
                   thunk)))
 
+(define (sqlite3-error-code e)
+  (cadr e))
+
+(define (sqlite3-error-message e)
+  (caddr e))
+
+(define (sqlite3-error-args e)
+  (cdddr e))
+
 (let ()
 
   ;;; Utils
