@@ -1,0 +1,5 @@
+A lightweight *sqlite3* interface for *Gambit-C* Scheme programming system originally written by Marco Benelli (<mbenelli@yahoo.com>). Some adaptations were made fo the code to be used as a shared library with *Squidmill* — a Squid proxy server log collector ([wolneykien/squidmill](http://github.com/wolneykien/squidmill)).
+
+The bundled Makefile is adjusted to produce a shared library and run unit tests. The RPM spec is compatible with ALT Linux (Sisyphus).
+
+The code is released under GNU GPL v3+ license.
